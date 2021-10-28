@@ -135,7 +135,7 @@ public class LightingDemo {
 
 		private void buildObjects(GL4 gl) {
 			OBJinfo obj = new OBJinfo();
-			obj.readOBJFile("src/cow.obj");
+			obj.readOBJFile("objects/cow.obj");
 
 			FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(obj.getVertexList());
 			FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(obj.getNormalList());
