@@ -135,7 +135,7 @@ public class LightingDemo {
 
 		private void buildObjects(GL4 gl) {
 			OBJinfo obj = new OBJinfo();
-			obj.readOBJFile("objects/cow.obj");
+			obj.readOBJFile("objects/cube.obj");
 
 			FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(obj.getVertexList());
 			FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(obj.getNormalList());
@@ -262,30 +262,35 @@ public class LightingDemo {
 		 * com.jogamp.newt.event.KeyListener#keyPressed(com.jogamp.newt.event.KeyEvent)
 		 */
 		public void keyPressed(KeyEvent e) {
-			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			short keyCode = e.getKeyCode();
+			if (keyCode == KeyEvent.VK_ESCAPE) {
 				new Thread(() -> {
 					window.destroy();
 				}).start();
-			} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			} else if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) {
 				rotationMatrix.glRotatef(10.0f, 0.0f, 1.0f, 0.0f);
-			} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+			} else if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A) {
 				rotationMatrix.glRotatef(-10.0f, 0.0f, 1.0f, 0.0f);
-			} else if (e.getKeyCode() == KeyEvent.VK_X) {
+			} else if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
+				rotationMatrix.glRotatef(10.0f, 1.0f, 0.0f, 0.0f);
+			} else if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
+				rotationMatrix.glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
+			}else if (keyCode == KeyEvent.VK_X) {
 				viewMatrix.glLoadIdentity();
 				viewMatrix.gluLookAt(25.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-			} else if (e.getKeyCode() == KeyEvent.VK_Z) {
+			} else if (keyCode == KeyEvent.VK_Z) {
 				viewMatrix.glLoadIdentity();
 				viewMatrix.gluLookAt(0.0f, 0.0f, 25.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-			} else if (e.getKeyCode() == KeyEvent.VK_Y) {
+			} else if (keyCode == KeyEvent.VK_Y) {
 				viewMatrix.glLoadIdentity();
 				viewMatrix.gluLookAt(0.0f, 25.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-			} else if (e.getKeyCode() == KeyEvent.VK_O) {
+			} else if (keyCode == KeyEvent.VK_O) {
 				projectionMatrix.glLoadIdentity();
 				projectionMatrix.glOrthof(-100.0f, 100.0f, -100.0f, 100.0f, -100.0f, 100.0f);
-			} else if (e.getKeyCode() == KeyEvent.VK_P) {
+			} else if (keyCode == KeyEvent.VK_P) {
 				projectionMatrix.glLoadIdentity();
 				projectionMatrix.gluPerspective(60.0f, 1.0f, 0.01f, 1000.0f);
-			} else if (e.getKeyCode() == KeyEvent.VK_I) {
+			} else if (keyCode == KeyEvent.VK_I) {
 				useInstanced = !useInstanced;
 			}
 		}
