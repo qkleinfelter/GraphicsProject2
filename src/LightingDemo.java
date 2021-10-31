@@ -135,7 +135,7 @@ public class LightingDemo {
 
 		private void buildObjects(GL4 gl) {
 			OBJinfo obj = new OBJinfo();
-			obj.readOBJFile("objects/cube.obj");
+			obj.readOBJFile("objects/elephantTriangles.obj");
 
 			FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(obj.getVertexList());
 			FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(obj.getNormalList());
@@ -290,8 +290,24 @@ public class LightingDemo {
 			} else if (keyCode == KeyEvent.VK_P) {
 				projectionMatrix.glLoadIdentity();
 				projectionMatrix.gluPerspective(60.0f, 1.0f, 0.01f, 1000.0f);
+			} else if (keyCode == KeyEvent.VK_L) {
+				// translate 1 in the x direction when pressing l
+				rotationMatrix.glTranslatef(1, 0, 0);
+			} else if (keyCode == KeyEvent.VK_J) {
+				// translate -1 in x direction when pressing l
+				rotationMatrix.glTranslatef(-1, 0, 0);
 			} else if (keyCode == KeyEvent.VK_I) {
-				useInstanced = !useInstanced;
+				// translate 1 in y direction when pressing l
+				rotationMatrix.glTranslatef(0, 1, 0);
+			} else if (keyCode == KeyEvent.VK_K) {
+				// translate -1 in y direction when pressing l
+				rotationMatrix.glTranslatef(0, -1, 0);
+			} else if (keyCode == KeyEvent.VK_COMMA) {
+				// translate 1 in z direction when pressing ,
+				rotationMatrix.glTranslatef(0, 0, 1);
+			} else if (keyCode == KeyEvent.VK_PERIOD) {
+				// translate -1 in z direction when pressing .
+				rotationMatrix.glTranslatef(0, 0, -1);
 			}
 		}
 
