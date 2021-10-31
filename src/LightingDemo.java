@@ -296,33 +296,18 @@ public class LightingDemo {
 			} else if (keyCode == KeyEvent.VK_P) {
 				projectionMatrix.glLoadIdentity();
 				projectionMatrix.gluPerspective(60.0f, 1.0f, 0.01f, 1000.0f);
-			} else if (keyCode == KeyEvent.VK_L) {
-				// translate 1 in the x direction when pressing l
-				rotationMatrix.glTranslatef(1, 0, 0);
-			} else if (keyCode == KeyEvent.VK_J) {
-				// translate -1 in x direction when pressing l
-				rotationMatrix.glTranslatef(-1, 0, 0);
-			} else if (keyCode == KeyEvent.VK_I) {
-				// translate 1 in y direction when pressing l
-				rotationMatrix.glTranslatef(0, 1, 0);
-			} else if (keyCode == KeyEvent.VK_K) {
-				// translate -1 in y direction when pressing l
-				rotationMatrix.glTranslatef(0, -1, 0);
-			} else if (keyCode == KeyEvent.VK_COMMA) {
-				// translate 1 in z direction when pressing ,
-				rotationMatrix.glTranslatef(0, 0, 1);
-			} else if (keyCode == KeyEvent.VK_PERIOD) {
-				// translate -1 in z direction when pressing .
-				rotationMatrix.glTranslatef(0, 0, -1);
 			} else if (keyCode == KeyEvent.VK_C) {
 				continuous = true;
+				System.out.println("Activated continuous movement");
 			} else if (keyCode == KeyEvent.VK_S) {
 				if (!continuous) {
 					// do one step
 					moveAlongEquation();
+					System.out.println("Moved 1 step");
 				} else {
 					// otherwise, stop running in continuous mode
 					continuous = false;
+					System.out.println("Deactivated continuous movement");
 				}
 			}
 		}
@@ -331,10 +316,8 @@ public class LightingDemo {
 			time += 0.01f;
 			float x = (float) (5 * Math.sin(time + (Math.PI / 2)));
 			float z = (float) (5 * Math.sin(2 * time));
-			System.out.println("translated to x: " + x + ", y: 0.0f, z: " + z);
 			float xMovement = x - prevX;
 			float zMovement = z - prevZ;
-			System.out.println("calculated xMovement: " + xMovement + ", zMovement: " + zMovement);
 			rotationMatrix.glTranslatef(xMovement, 0, zMovement);
 			prevX = x;
 			prevZ = z;
