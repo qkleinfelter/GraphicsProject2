@@ -190,7 +190,7 @@ public class LightingDemo {
 			System.out.println("vertexBuffer Capacity = " + vertexBuffer.capacity() + "  normalBuffer Capacity = " + normalBuffer.capacity());
 
 			// bind the third VAO
-			gl.glBindVertexArray(vertexArrayName.get(1));
+			gl.glBindVertexArray(vertexArrayName.get(2));
 			// gen buffer array object
 			gl.glGenBuffers(Buffer.MAX, bufferName);
 			// create the buffer & sub buffer data for this BAO
