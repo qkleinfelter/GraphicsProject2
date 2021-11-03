@@ -13,6 +13,8 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL.GL_FLOAT;
@@ -67,7 +69,7 @@ public class LightingDemo {
 			new HelloTriangleSimple().setup();
 		}
 
-		private int nbrVertices;
+		private int nbrVertices = 0;
 		private final IntBuffer bufferName = GLBuffers.newDirectIntBuffer(Buffer.MAX);
 		private final IntBuffer vertexArrayName = GLBuffers.newDirectIntBuffer(3);
 		private Program program;
@@ -137,67 +139,50 @@ public class LightingDemo {
 		}
 
 		private void buildObjects(GL4 gl) {
-			OBJinfo obj = new OBJinfo();
-			obj.readOBJFile("objects/elephantTriangles.obj");
+			List<OBJinfo> objList = new ArrayList<>();
+			objList.add(new OBJinfo());
+//			objList.add(new OBJinfo());
+//			objList.add(new OBJinfo());
+			objList.get(0).readOBJFile("objects/elephantTriangles.obj");
+//			objList.get(1).readOBJFile("objects/cylinderProject2.obj");
+//			objList.get(2).readOBJFile("objects/cubedos.obj");
 
-			FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(obj.getVertexList());
-			FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(obj.getNormalList());
-
-			System.out.println("vertexBuffer Capacity = " + vertexBuffer.capacity() + "  normalBuffer Capacity = " + normalBuffer.capacity());
 			// build 3 vertex array objects
 			gl.glGenVertexArrays(3, vertexArrayName);
-			// bind the first VAO
-			gl.glBindVertexArray(vertexArrayName.get(0));
-			// gen buffer array object
-			gl.glGenBuffers(Buffer.MAX, bufferName);
-			// bind buffer array object
-			gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(0));
-			// create the buffer & sub buffer data for this BAO
-			gl.glBufferData(GL_ARRAY_BUFFER, (vertexBuffer.capacity() * 4L + normalBuffer.capacity()) * 3, null,
-					GL_STATIC_DRAW);
-			gl.glBufferSubData(GL_ARRAY_BUFFER, 0L, vertexBuffer.capacity() * 4L, vertexBuffer);
-			gl.glBufferSubData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * 4L, normalBuffer.capacity() * 4L, normalBuffer);
-			nbrVertices = vertexBuffer.capacity() / 4;
-			int vPosition = gl.glGetAttribLocation(program.name, "vPosition");
-			int vNormal = gl.glGetAttribLocation(program.name, "vNormal");
-			gl.glEnableVertexAttribArray(vPosition);
-			gl.glVertexAttribPointer(vPosition, 4, GL_FLOAT, false, 0, 0);
-			if (vNormal != -1){
-				gl.glEnableVertexAttribArray(vNormal);
-				gl.glVertexAttribPointer(vNormal, 3, GL_FLOAT, false, 0, vertexBuffer.capacity() * 4L);
-			}
 
-//			OBJinfo cylinder = new OBJinfo();
-//			cylinder.readOBJFile("objects/cylinderProject2.obj");
-//			vertexBuffer = GLBuffers.newDirectFloatBuffer(cylinder.getVertexList());
-//			normalBuffer = GLBuffers.newDirectFloatBuffer(cylinder.getNormalList());
-//			System.out.println("vertexBuffer Capacity = " + vertexBuffer.capacity() + "  normalBuffer Capacity = " + normalBuffer.capacity());
-//
-//			// bind the second VAO
-//			gl.glBindVertexArray(vertexArrayName.get(1));
-//			// gen buffer array object
-//			gl.glGenBuffers(Buffer.MAX, bufferName);
-//			// create the buffer & sub buffer data for this BAO
-//			gl.glBufferData(GL_ARRAY_BUFFER, (vertexBuffer.capacity() * 4L + normalBuffer.capacity()) * 3, null, GL_STATIC_DRAW);
-//			gl.glBufferSubData(GL_ARRAY_BUFFER, 0L, vertexBuffer.capacity() * 4L, vertexBuffer);
-//			gl.glBufferSubData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * 4L, normalBuffer.capacity() * 4L, normalBuffer);
-//			nbrVertices += vertexBuffer.capacity() / 4;
-//
-//			OBJinfo cone = new OBJinfo();
-//			cone.readOBJFile("objects/coneProject2.obj");
-//			vertexBuffer = GLBuffers.newDirectFloatBuffer(cone.getVertexList());
-//			normalBuffer = GLBuffers.newDirectFloatBuffer(cone.getNormalList());
-//			System.out.println("vertexBuffer Capacity = " + vertexBuffer.capacity() + "  normalBuffer Capacity = " + normalBuffer.capacity());
-//
-//			// bind the third VAO
-//			gl.glBindVertexArray(vertexArrayName.get(2));
-//			// gen buffer array object
-//			gl.glGenBuffers(Buffer.MAX, bufferName);
-//			// create the buffer & sub buffer data for this BAO
-//			gl.glBufferData(GL_ARRAY_BUFFER, (vertexBuffer.capacity() * 4L + normalBuffer.capacity()) * 3, null, GL_STATIC_DRAW);
-//			gl.glBufferSubData(GL_ARRAY_BUFFER, 0L, vertexBuffer.capacity() * 4L, vertexBuffer);
-//			gl.glBufferSubData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * 4L, normalBuffer.capacity() * 4L, normalBuffer);
-//			nbrVertices += vertexBuffer.capacity() / 4;
+			for (int i = 0; i < objList.size(); i++) {
+				FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(objList.get(i).getVertexList());
+				FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(objList.get(i).getNormalList());
+				System.out.println("vertexBuffer Capacity = " + vertexBuffer.capacity() + "  normalBuffer Capacity = " + normalBuffer.capacity());
+
+				// bind the VAO
+				gl.glBindVertexArray(vertexArrayName.get(i));
+				// gen buffer array object
+				gl.glGenBuffers(Buffer.MAX, bufferName);
+				// bind buffer array object
+				gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(i));
+				// create the buffer & sub buffer data for this BAO
+				gl.glBufferData(GL_ARRAY_BUFFER, (vertexBuffer.capacity() * 4L + normalBuffer.capacity()) * 3, null,
+						GL_STATIC_DRAW);
+				gl.glBufferSubData(GL_ARRAY_BUFFER, 0L, vertexBuffer.capacity() * 4L, vertexBuffer);
+				gl.glBufferSubData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * 4L, normalBuffer.capacity() * 4L, normalBuffer);
+				nbrVertices += vertexBuffer.capacity() / 4;
+
+				int vPosition = gl.glGetAttribLocation(program.name, "vPosition");
+				int vNormal = gl.glGetAttribLocation(program.name, "vNormal");
+				gl.glEnableVertexAttribArray(vPosition);
+				gl.glVertexAttribPointer(vPosition, 4, GL_FLOAT, false, 0, 0);
+				if (vNormal != -1){
+					gl.glEnableVertexAttribArray(vNormal);
+					gl.glVertexAttribPointer(vNormal, 3, GL_FLOAT, false, 0, vertexBuffer.capacity() * 4L);
+				}
+
+				if (i == 1) {
+					rotationMatrix.glTranslatef(-2, 0, 0);
+				} else if (i == 2) {
+					rotationMatrix.glTranslatef(2, 0, 0);
+				}
+			}
 		}
 
 		@Override
@@ -216,16 +201,18 @@ public class LightingDemo {
 			gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			gl.glUseProgram(program.name);
 			setupDirectedLights(gl);
-			
+
+			int modelMatrixLocation = gl.glGetUniformLocation(program.name, "modelingMatrix");
+			int viewMatrixLocation = gl.glGetUniformLocation(program.name, "viewingMatrix");
+			int projectionMatrixLocation = gl.glGetUniformLocation(program.name, "projectionMatrix");
+			int normalMatrixLocation = gl.glGetUniformLocation(program.name, "normalMatrix");
+
+			// OBJECT 1: Elephant / Deer etc.
 			gl.glBindVertexArray(vertexArrayName.get(0));
 			gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(0));
-			int modelMatrixLocation = gl.glGetUniformLocation(program.name, "modelingMatrix");
 			gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, rotationMatrix.glGetMatrixf());
-			int viewMatrixLocation = gl.glGetUniformLocation(program.name, "viewingMatrix");
 			gl.glUniformMatrix4fv(viewMatrixLocation, 1, false, viewMatrix.glGetMatrixf());
-			int projectionMatrixLocation = gl.glGetUniformLocation(program.name, "projectionMatrix");
 			gl.glUniformMatrix4fv(projectionMatrixLocation, 1, false, projectionMatrix.glGetMatrixf());
-			int normalMatrixLocation = gl.glGetUniformLocation(program.name, "normalMatrix");
 			PMVMatrix scale = new PMVMatrix();
 			scale.glScalef(1.0f, 1.0f, 1.0f);
 			PMVMatrix trsMatrix = new PMVMatrix();
@@ -239,6 +226,38 @@ public class LightingDemo {
 			if (continuous) {
 				moveAlongEquation();
 			}
+
+			// OBJECT 2: Cylinder
+			gl.glBindVertexArray(vertexArrayName.get(1));
+			gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(1));
+			gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, rotationMatrix.glGetMatrixf());
+			gl.glUniformMatrix4fv(viewMatrixLocation, 1, false, viewMatrix.glGetMatrixf());
+			gl.glUniformMatrix4fv(projectionMatrixLocation, 1, false, projectionMatrix.glGetMatrixf());
+			scale = new PMVMatrix();
+			scale.glScalef(1.0f, 1.0f, 1.0f);
+			trsMatrix = new PMVMatrix();
+			trsMatrix.glLoadIdentity();
+			trsMatrix.glMultMatrixf(rotationMatrix.glGetMatrixf());
+			trsMatrix.glMultMatrixf(scale.glGetMatrixf());
+			gl.glUniformMatrix4fv(normalMatrixLocation,  1,  false, trsMatrix.glGetMvitMatrixf());
+			gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, trsMatrix.glGetMatrixf());
+			gl.glDrawArrays(GL_TRIANGLES, 0, nbrVertices);
+
+			// OBJECT 3: Cube
+			gl.glBindVertexArray(vertexArrayName.get(2));
+			gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(2));
+			gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, rotationMatrix.glGetMatrixf());
+			gl.glUniformMatrix4fv(viewMatrixLocation, 1, false, viewMatrix.glGetMatrixf());
+			gl.glUniformMatrix4fv(projectionMatrixLocation, 1, false, projectionMatrix.glGetMatrixf());
+			scale = new PMVMatrix();
+			scale.glScalef(1.0f, 1.0f, 1.0f);
+			trsMatrix = new PMVMatrix();
+			trsMatrix.glLoadIdentity();
+			trsMatrix.glMultMatrixf(rotationMatrix.glGetMatrixf());
+			trsMatrix.glMultMatrixf(scale.glGetMatrixf());
+			gl.glUniformMatrix4fv(normalMatrixLocation,  1,  false, trsMatrix.glGetMvitMatrixf());
+			gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, trsMatrix.glGetMatrixf());
+			gl.glDrawArrays(GL_TRIANGLES, 0, nbrVertices);
 		}
 
 		/**
