@@ -69,7 +69,7 @@ public class LightingDemo {
 			new HelloTriangleSimple().setup();
 		}
 
-		private int nbrVertices = 0;
+		private final int[] nbrVertices = new int[4];
 		private final IntBuffer bufferName = GLBuffers.newDirectIntBuffer(Buffer.MAX);
 		private final IntBuffer vertexArrayName = GLBuffers.newDirectIntBuffer(3);
 		private Program program;
@@ -87,7 +87,7 @@ public class LightingDemo {
 
 			window = GLWindow.create(glCapabilities);
 
-			window.setTitle("Perspective Demo");
+			window.setTitle("Graphics Project 2 - Quinn Kleinfelter");
 			window.setSize(600, 600);
 
 			window.setContextCreationFlags(GLContext.CTX_OPTION_DEBUG);
@@ -115,10 +115,14 @@ public class LightingDemo {
 
 			initDebug(gl);
 			program = new Program(gl, "src/", "passthrough", "directional");
+
 			rotationMatrix.glLoadIdentity();
 			viewMatrix.glLoadIdentity();
+			viewMatrix.gluLookAt(0.0f, 0.0f, 25.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
 			projectionMatrix.glLoadIdentity();
-			projectionMatrix.glOrthof(-10.0f, 10.0f, -10.0f, 10.0f, -100f, 100f);
+			projectionMatrix.gluPerspective(60.0f, 1.0f, 0.01f, 1000.0f);
+
 			buildObjects(gl);
 			gl.glEnable(GL_DEPTH_TEST);
 			gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL);
@@ -141,11 +145,11 @@ public class LightingDemo {
 		private void buildObjects(GL4 gl) {
 			List<OBJinfo> objList = new ArrayList<>();
 			objList.add(new OBJinfo());
-//			objList.add(new OBJinfo());
-//			objList.add(new OBJinfo());
+			objList.add(new OBJinfo());
+			objList.add(new OBJinfo());
 			objList.get(0).readOBJFile("objects/elephantTriangles.obj");
-//			objList.get(1).readOBJFile("objects/cylinderProject2.obj");
-//			objList.get(2).readOBJFile("objects/cubedos.obj");
+			objList.get(1).readOBJFile("objects/cylinderProject2.obj");
+			objList.get(2).readOBJFile("objects/coneProject2.obj");
 
 			// build 3 vertex array objects
 			gl.glGenVertexArrays(3, vertexArrayName);
@@ -162,25 +166,19 @@ public class LightingDemo {
 				// bind buffer array object
 				gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(i));
 				// create the buffer & sub buffer data for this BAO
-				gl.glBufferData(GL_ARRAY_BUFFER, (vertexBuffer.capacity() * 4L + normalBuffer.capacity()) * 3, null,
+				gl.glBufferData(GL_ARRAY_BUFFER, (vertexBuffer.capacity() * 4L + normalBuffer.capacity() * 3L), null,
 						GL_STATIC_DRAW);
 				gl.glBufferSubData(GL_ARRAY_BUFFER, 0L, vertexBuffer.capacity() * 4L, vertexBuffer);
-				gl.glBufferSubData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * 4L, normalBuffer.capacity() * 4L, normalBuffer);
-				nbrVertices += vertexBuffer.capacity() / 4;
+				gl.glBufferSubData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * 4L, normalBuffer.capacity() * 3L, normalBuffer);
+				nbrVertices[i] = vertexBuffer.capacity() / 4;
 
 				int vPosition = gl.glGetAttribLocation(program.name, "vPosition");
 				int vNormal = gl.glGetAttribLocation(program.name, "vNormal");
 				gl.glEnableVertexAttribArray(vPosition);
 				gl.glVertexAttribPointer(vPosition, 4, GL_FLOAT, false, 0, 0);
-				if (vNormal != -1){
+				if (vNormal != -1) {
 					gl.glEnableVertexAttribArray(vNormal);
 					gl.glVertexAttribPointer(vNormal, 3, GL_FLOAT, false, 0, vertexBuffer.capacity() * 4L);
-				}
-
-				if (i == 1) {
-					rotationMatrix.glTranslatef(-2, 0, 0);
-				} else if (i == 2) {
-					rotationMatrix.glTranslatef(2, 0, 0);
 				}
 			}
 		}
@@ -221,7 +219,7 @@ public class LightingDemo {
 			trsMatrix.glMultMatrixf(scale.glGetMatrixf());
 			gl.glUniformMatrix4fv(normalMatrixLocation,  1,  false, trsMatrix.glGetMvitMatrixf());
 			gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, trsMatrix.glGetMatrixf());
-			gl.glDrawArrays(GL_TRIANGLES, 0, nbrVertices);
+			gl.glDrawArrays(GL_TRIANGLES, 0, nbrVertices[1]);
 
 			if (continuous) {
 				moveAlongEquation();
@@ -230,34 +228,26 @@ public class LightingDemo {
 			// OBJECT 2: Cylinder
 			gl.glBindVertexArray(vertexArrayName.get(1));
 			gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(1));
-			gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, rotationMatrix.glGetMatrixf());
-			gl.glUniformMatrix4fv(viewMatrixLocation, 1, false, viewMatrix.glGetMatrixf());
-			gl.glUniformMatrix4fv(projectionMatrixLocation, 1, false, projectionMatrix.glGetMatrixf());
-			scale = new PMVMatrix();
-			scale.glScalef(1.0f, 1.0f, 1.0f);
-			trsMatrix = new PMVMatrix();
-			trsMatrix.glLoadIdentity();
-			trsMatrix.glMultMatrixf(rotationMatrix.glGetMatrixf());
-			trsMatrix.glMultMatrixf(scale.glGetMatrixf());
-			gl.glUniformMatrix4fv(normalMatrixLocation,  1,  false, trsMatrix.glGetMvitMatrixf());
-			gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, trsMatrix.glGetMatrixf());
-			gl.glDrawArrays(GL_TRIANGLES, 0, nbrVertices);
+			PMVMatrix cylinderTranslate = new PMVMatrix();
+			cylinderTranslate.glTranslatef(-2.0f, 0.0f, 0.0f);
+			PMVMatrix cylinderTrsMatrix = new PMVMatrix();
+			cylinderTrsMatrix.glLoadIdentity();
+			cylinderTrsMatrix.glMultMatrixf(cylinderTranslate.glGetMatrixf());
+			gl.glUniformMatrix4fv(normalMatrixLocation,  1,  false, cylinderTrsMatrix.glGetMvitMatrixf());
+			gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, cylinderTrsMatrix.glGetMatrixf());
+			gl.glDrawArrays(GL_TRIANGLES, 0, nbrVertices[1]);
 
 			// OBJECT 3: Cube
 			gl.glBindVertexArray(vertexArrayName.get(2));
 			gl.glBindBuffer(GL_ARRAY_BUFFER, bufferName.get(2));
-			gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, rotationMatrix.glGetMatrixf());
-			gl.glUniformMatrix4fv(viewMatrixLocation, 1, false, viewMatrix.glGetMatrixf());
-			gl.glUniformMatrix4fv(projectionMatrixLocation, 1, false, projectionMatrix.glGetMatrixf());
-			scale = new PMVMatrix();
-			scale.glScalef(1.0f, 1.0f, 1.0f);
-			trsMatrix = new PMVMatrix();
-			trsMatrix.glLoadIdentity();
-			trsMatrix.glMultMatrixf(rotationMatrix.glGetMatrixf());
-			trsMatrix.glMultMatrixf(scale.glGetMatrixf());
-			gl.glUniformMatrix4fv(normalMatrixLocation,  1,  false, trsMatrix.glGetMvitMatrixf());
-			gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, trsMatrix.glGetMatrixf());
-			gl.glDrawArrays(GL_TRIANGLES, 0, nbrVertices);
+			PMVMatrix cubeTranslate = new PMVMatrix();
+			cubeTranslate.glTranslatef(2.0f, 0.0f, 0.0f);
+			PMVMatrix cubeTrsMatrix = new PMVMatrix();
+			cubeTrsMatrix.glLoadIdentity();
+			cubeTrsMatrix.glMultMatrixf(cubeTranslate.glGetMatrixf());
+			gl.glUniformMatrix4fv(normalMatrixLocation,  1,  false, cubeTrsMatrix.glGetMvitMatrixf());
+			gl.glUniformMatrix4fv(modelMatrixLocation, 1, false, cubeTrsMatrix.glGetMatrixf());
+			gl.glDrawArrays(GL_TRIANGLES, 0, nbrVertices[2]);
 		}
 
 		/**
