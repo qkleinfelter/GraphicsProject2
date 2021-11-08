@@ -212,7 +212,7 @@ public class LightingDemo {
 			gl.glUniformMatrix4fv(viewMatrixLocation, 1, false, viewMatrix.glGetMatrixf());
 			gl.glUniformMatrix4fv(projectionMatrixLocation, 1, false, projectionMatrix.glGetMatrixf());
 			PMVMatrix scale = new PMVMatrix();
-			scale.glScalef(1.0f, 1.0f, 1.0f);
+			scale.glScalef(1.5f, 1.5f, 1.5f);
 			PMVMatrix trsMatrix = new PMVMatrix();
 			trsMatrix.glLoadIdentity();
 			trsMatrix.glMultMatrixf(rotationMatrix.glGetMatrixf());
@@ -338,7 +338,7 @@ public class LightingDemo {
 				viewMatrix.gluLookAt(0.0f, 25.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 			} else if (keyCode == KeyEvent.VK_O) {
 				projectionMatrix.glLoadIdentity();
-				projectionMatrix.glOrthof(-10f, 10f, -10f, 10f, -100f, 100f);
+				projectionMatrix.glOrthof(-5f, 5f, -5f, 5f, -35f, 35f);
 			} else if (keyCode == KeyEvent.VK_P) {
 				projectionMatrix.glLoadIdentity();
 				projectionMatrix.gluPerspective(60.0f, 1.0f, 0.01f, 1000.0f);
