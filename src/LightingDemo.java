@@ -28,7 +28,14 @@ import static com.jogamp.opengl.GL4.GL_MAP_COHERENT_BIT;
 import static com.jogamp.opengl.GL4.GL_MAP_PERSISTENT_BIT;
 
 /**
- * 
+ * @author Quinn Kleinfelter
+ * Modified the existing sample code to also read in a third object, the cones.
+ * These objects are read in from the objects/ directory, which must be at the same sub-level as the src/ directory.
+ * The required objects are: "coneProject2.obj", "cylinderProject2.obj" and "elephantTriangles.obj".
+ * If you wish to alter the objects used please adjust the lines at the beginning of buildObjects where we read
+ * the files in. By default, the elephant object will follow the parametric equation specified around the 2 other objects.
+ * You can press S to stop the continuous motion, and continue pressing S to move step by step. You can also return to
+ * continuous motion by pressing C.
  */
 
 /**
@@ -61,7 +68,7 @@ public class LightingDemo {
 
 		private GLWindow window;
 		private Animator animator;
-		private boolean continuous = false;
+		private boolean continuous = true;
 		private float time = 0.0f;
 		private float prevX = 0.0f, prevZ = 0.0f;
 
@@ -362,9 +369,9 @@ public class LightingDemo {
 			time += 0.01f;
 			float x = (float) (5 * Math.sin(time + (Math.PI / 2)));
 			float z = (float) (5 * Math.sin(2 * time));
-			float xMovement = x - prevX;
-			float zMovement = z - prevZ;
-			rotationMatrix.glTranslatef(xMovement, 0, zMovement);
+			float deltaX = x - prevX;
+			float deltaZ = z - prevZ;
+			rotationMatrix.glTranslatef(deltaX, 0, deltaZ);
 			prevX = x;
 			prevZ = z;
 		}
