@@ -30,9 +30,9 @@ void main()
 	vec3 reflectedLight = lightColor * specular * strength;
 	vec3 rgb = min(Color.rgb * scatteredLight + reflectedLight, vec3(1.0));
     FragColor = vec4(rgb, Color.a);
-    if (diffuse == 0.0) {
-    	FragColor = vec4(0.85, 0.84, 0.63, 1.0);
-    }
+//    if (diffuse == 0.0) {
+//    	FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+//    }
 //	FragColor = vec4(Color.rgb * ambientLight, Color.a);
 	
 }
