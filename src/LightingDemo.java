@@ -149,7 +149,7 @@ public class LightingDemo {
 		private void buildObjects(GL4 gl) {
 			// OBJECT 1: Cow, elephant, deer, etc.
 			OBJinfo obj = new OBJinfo();
-			obj.readOBJFile("objects/elephantTriangles.obj");
+			obj.readOBJFile("objects/elephantTriangles.obj"); // ADJUST THIS LINE FOR DIFFERENT OBJECTS
 
 			FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(obj.getVertexList());
 			FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(obj.getNormalList());
